@@ -1,6 +1,8 @@
 import math
 def do_turn(pw):
+
 	boolean = 0
+	dest = 0
 	if (len(pw.my_planets()) == 0 or len(pw.my_fleets()) >= 1):
 		return
 	if len(pw.neutral_planets()) >= 1 and len(pw.my_planets()) < 9:
@@ -20,7 +22,8 @@ def do_turn(pw):
 			dest = closest_planet(enemy, pw.my_planets()[0],dest)
 			boolean = 1
 	source = pw.my_planets()[0]
-	
+	if len(pw.enemy_planets()) == 0:
+		return
 	num_ships = source.num_ships() / 2
 	if boolean == 0:
 		my_planets = pw.my_planets()
@@ -38,7 +41,16 @@ def do_turn(pw):
 		if (dest.num_ships() + (pw.distance(source, dest) * dest.growth_rate()) + 1 < source.num_ships()):
 			num_ships = dest.num_ships() + 1 + (pw.distance(source, dest) * dest.growth_rate())
 		else:
-			num_ships = (source.num_ships() / 2)
+			my_planets = pw.my_planets()
+			most_fleets = my_planets[0].num_ships()
+			for i in range(1,len(my_planets)):
+				if my_planets[i].num_ships() > most_fleets:
+					most_fleets = my_planets[i].num_ships()
+					source = my_planets[i]
+			if (dest.num_ships() + (pw.distance(source, dest) * dest.growth_rate()) + 1 < source.num_ships()):
+				num_ships = dest.num_ships() + 1 + (pw.distance(source, dest) * dest.growth_rate())
+			else:
+				num_ships = most_fleets / 2
 	
 	pw.debug('Num Ships: ' + str(num_ships) + "Bool = " + str(boolean))
 	
